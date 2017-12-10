@@ -1,0 +1,37 @@
+{
+  "name": "Flying Unicorn",
+  "version": "0.0.2",
+  "manifest_version": 2,
+  "description": "Inserts a unicorn into your page! Click Ctrl+U to add a unicorn into the page. Click C to remove all of the unicorns.",
+  "homepage_url": "https://github.com/justintieu/flying-unicorn",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "permissions": [
+    "https://*/*",
+    "http://*/* "
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+      "css": [
+        "src/inject/inject.css"
+      ]
+    },
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+      "js": [
+        "src/inject/inject.js"
+      ]
+    }
+  ]
+}
