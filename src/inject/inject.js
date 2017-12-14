@@ -6,7 +6,7 @@ chrome.extension.sendMessage({}, function(response) {
 		function getSettings(callback) {
 			return chrome.storage.sync.get({
 				unicornImage: 'https://i.imgur.com/XeEii4X.png',
-				unicornAdd: 'ctrl+u',
+				unicornAdd: 'u',
 				unicornClear: 'c'
 			}, function(settings) {
 				callback(settings);
