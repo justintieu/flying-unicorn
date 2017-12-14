@@ -2,7 +2,7 @@
   "name": "Flying Unicorn",
   "version": "0.0.3",
   "manifest_version": 2,
-  "description": "Inserts a unicorn into your page! Click Ctrl+U to add a unicorn into the page. Click C to remove all of the unicorns.",
+  "description": "Inserts a unicorn into your page!",
   "homepage_url": "https://github.com/justintieu/flying-unicorn",
   "icons": {
     "16": "icons/icon16.png",
