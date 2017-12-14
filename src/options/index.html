@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Flying Unicorn - Options</title>
+		<link rel="stylesheet" type="text/css" href="foundation.min.css" />
+	</head>
+	<body>
+		<div id="body-container" class="small-12 medium-9 large-10 medium-push-3 large-push-2 columns">
+			<form>
+				<div class="grid-container">
+					<div class="grid-x grid-padding-x">
+						<div class="medium-12 cell">
+							<h3>Flying Unicorn - Options</h3>
+						</div>
+						<div class="medium-12 cell">
+							<label for="unicorn-img-setting">Unicorn Picture
+								<input type="text"
+										id="unicorn-img-setting"
+										placeholder="Insert URL to an image (e.g. https://i.imgur.com/XeEii4X.png)">
+							</label>
+						</div>
+						<div class="medium-12 cell">
+							<label for="unicorn-add-setting">Add a Unicorn
+								<input type="text"
+										id="unicorn-add-setting"
+										placeholder="Press any keys to set this setting (e.g. u)">
+							</label>
+						</div>
+						<div class="medium-12 cell">
+							<label for="unicorn-clear-setting">Clear All Unicorn
+								<input type="text"
+										id="unicorn-clear-setting"
+										placeholder="Press any keys to set this setting (e.g. c)">
+							</label>
+						</div>
+						<div class="medium-12 cell">
+							<button id="save" class="button">Save</button>
+							<button id="reset" class="button">Reset Defaults</button>
+						</div>
+						<div class="medium-12 cell label">
+							<span id="status" class="label"></span>
+						</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+
+		<script src="options.js"></script>
+	</body>
+</html>
