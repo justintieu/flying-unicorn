@@ -8,6 +8,7 @@ Table of Contents
 * [Install](#install)
 * [Tech stack](#tech-stack)
 * [Release Notes](#release-notes)
+  * [v0.1.0](#v010) 
   * [v0.0.3](#v003)
   * [v0.0.2](#v002)
 * [Problems, Comments, Concerns, Improvements, Suggestions?](#problems-comments-concerns-improvements-suggestions)
@@ -27,6 +28,11 @@ Install the Chrome Extension through the [Google Chrome Web Store](https://chrom
 Javascript
 
 ## Release Notes
+###  v0.1.0
+* Updated to manifest v3
+* Updated options page to allow user to test their inputs
+* Fixed issue where unicorn was set to display: none
+
 ###  v0.0.3
 * Included an options page to allow users to configure flying image and key bindings for adding/removing unicorns
 * Updated default key binding for adding a unicorn to <kbd>U</kbd>

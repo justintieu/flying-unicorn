@@ -1,110 +1,108 @@
-chrome.extension.sendMessage({}, function(response) {
-	var readyStateCheckInterval = setInterval(function() {
-	if (document.readyState === "complete") {
-		clearInterval(readyStateCheckInterval);
+class UnicornAnimator {
+	constructor() {
+		this.container = null;
+		this.settings = {
+			unicornImage: "https://i.imgur.com/XeEii4X.png",
+			unicornAdd: "u",
+			unicornClear: "c",
+			unicornSpeed: 5,
+			enableUnicorn: true,
+		};
 
-		function getSettings(callback) {
-			return chrome.storage.sync.get({
-				unicornImage: 'https://i.imgur.com/XeEii4X.png',
-				unicornAdd: 'u',
-				unicornClear: 'c'
-			}, function(settings) {
-				callback(settings);
-
-			});
-		}
-
-		function matchKeys(expected, actual) {
-			var keysPressed = [];
-
-			if (actual.altKey) {
-				keysPressed.push('alt');
-			}
-
-			if (actual.ctrlKey) {
-				keysPressed.push('ctrl');
-			}
-
-			if (actual.metaKey) {
-				keysPressed.push('meta');
-			}
-
-			if (actual.shiftKey) {
-				keysPressed.push('shift');
-			}
-
-			if (keysPressed.indexOf(actual.key.toLowerCase()) === -1 && actual.key.toLowerCase() !== 'control') {
-				keysPressed.push(actual.key.toLowerCase());
-			}
-
-			return expected === keysPressed.join('+');
-
-		}
-
-		function createUnicornContainer() {
-			var container = document.getElementById('unicorn-container');
-			if (container === null) {
-				var body = document.getElementsByTagName('body')[0];
-				container = document.createElement('div');
-				container.id = 'unicorn-container';
-				body.append(container);
-			}
-
-			return container;
-		}
-
-		/**
-		 * Creates a unicorn image element and adds it into the unicorn container
-		 * @return {Element} unicorn image element
-		 */
-		function createUnicorn(container, unicornImage) {
-			var unicorn = document.createElement('img');
-			unicorn.classList = "unicorn-img";
-			unicorn.src = unicornImage;
-			unicorn.style.display = "block";
-			container.append(unicorn);
-
-			return unicorn;
-		}
-
-		/**
-		 * Gives the illusion that a unicorn is animated by adjusting the position
-		 * of the left style of a unicorn element.
-		 * @param  {Element} unicorn element which will be moved from left to right
-		 */
-		function animate(unicorn) {
-			var pos = "-150";
-			var interval = setInterval(frame, 5);
-			function frame() {
-				if (pos == window.innerWidth + 150) {
-					unicorn.remove();
-
-				} else {
-					pos++; 
-					unicorn.style.left = pos + 'px'; 
-
-				}
-			}
-		}
-
-		var body = document.getElementsByTagName('body')[0];
-		body.addEventListener("keypress", function(event) {
-			getSettings(function(settings) {
-				if (matchKeys(settings.unicornClear, event)) {
-					// performs clear action by emptying unicorn container
-					var container = document.getElementById('unicorn-container');
-					container.innerHTML = '';
-
-				} else if (matchKeys(settings.unicornAdd, event)) {
-					var container = createUnicornContainer();
-					// adds a unicorn to the page and animates it
-					var unicorn = createUnicorn(container, settings.unicornImage);
-					animate(unicorn);
-
-				}
-			});
-
-		}, false);
+		this.init();
 	}
-	}, 10);
-});
+
+	// Initialize the script: load settings and set up event listeners
+	async init() {
+		await this.loadSettings();
+		this.createContainer();
+		document.body.addEventListener("keydown", (event) => this.handleKeyPress(event));
+	}
+
+	// Retrieve settings from Chrome storage
+	async loadSettings() {
+		return new Promise((resolve) => {
+			chrome.storage.sync.get(this.settings, (storedSettings) => {
+				this.settings = storedSettings;
+				resolve();
+			});
+		});
+	}
+
+	// Creates a container for unicorns if it doesn't exist
+	createContainer() {
+		this.container = document.getElementById("unicorn-container");
+		if (!this.container) {
+			this.container = document.createElement("div");
+			this.container.id = "unicorn-container";
+			document.body.appendChild(this.container);
+		}
+	}
+
+	// Handles keypress events for adding/removing unicorns
+	handleKeyPress(event) {
+		if (!this.settings.enableUnicorn) { 
+			return;
+		}
+
+		if (this.matchKeys(this.settings.unicornClear, event)) {
+			this.clearUnicorns();
+		} else if (this.matchKeys(this.settings.unicornAdd, event)) {
+			this.addUnicorn();
+		}
+	}
+
+	// Compares expected key combination with the actual event keys
+	matchKeys(expected, event) {
+		const keysPressed = [];
+
+		if (event.altKey) keysPressed.push("alt");
+		if (event.ctrlKey) keysPressed.push("ctrl");
+		if (event.metaKey) keysPressed.push("meta");
+		if (event.shiftKey) keysPressed.push("shift");
+
+		if (!keysPressed.includes(event.key.toLowerCase()) && event.key.toLowerCase() !== "control") {
+			keysPressed.push(event.key.toLowerCase());
+		}
+
+		return expected === keysPressed.join("+");
+	}
+
+	// Adds a unicorn to the page and starts animation
+	addUnicorn() {
+		const unicorn = document.createElement("img");
+		unicorn.classList.add("unicorn-img");
+		unicorn.src = this.settings.unicornImage;
+		unicorn.alt = "unicorn";
+		unicorn.style.position = "absolute";
+		unicorn.style.top = `${Math.random() * (window.innerHeight - 100)}px`; // Random vertical position
+		unicorn.style.left = "-150px"; // Start off-screen
+		unicorn.style.width = "100px";
+		unicorn.style.height = "auto";
+
+		this.container.appendChild(unicorn);
+		this.animateUnicorn(unicorn);
+	}
+
+	// Animates the unicorn across the screen
+	animateUnicorn(unicorn) {
+		let pos = -150;
+		const move = () => {
+			if (pos >= window.innerWidth + 150) {
+				unicorn.remove();
+			} else {
+				pos += (+this.settings.unicornSpeed); // Move speed
+				unicorn.style.left = `${pos}px`;
+				requestAnimationFrame(move);
+			}
+		};
+		move();
+	}
+
+	// Clears all unicorns from the screen
+	clearUnicorns() {
+		this.container.innerHTML = "";
+	}
+}
+
+new UnicornAnimator();

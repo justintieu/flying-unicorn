@@ -1,123 +1,222 @@
-/**
- * Performs Save action based on the setting values in the input fields
- * 
- * @param {Object} event  current event used to prevent form default
- */
-function perform_save(event) {
-	var unicornImg = document.getElementById('unicorn-img-setting').value;
-	var addAction = document.getElementById('unicorn-add-setting').value;
-	var clearAction = document.getElementById('unicorn-clear-setting').value;
-	save_options(unicornImg, addAction, clearAction, displaySave);
-	event.preventDefault();
+// TODO. create a module for UnicornAnimator so it can be imported in here and for the inject.js
+class UnicornAnimator {
+    constructor() {
+        this.container = null;
+        this.settings = {
+            unicornImage: "https://i.imgur.com/XeEii4X.png",
+            unicornAdd: "u",
+            unicornClear: "c",
+            unicornSpeed: 5,
+            enableUnicorn: true,
+        };
 
-}
+        this.init = this.init.bind(this);
+		this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.init();
+    }
 
-/**
- * Peforms Reset action to restore the setting values to the default
- * 
- * @param {Object} event  current event used to prevent form default
- */
-function perform_reset(event) {
-	save_options('https://i.imgur.com/XeEii4X.png', 'u', 'c', function() {
-		displaySave();
-		document.getElementById('unicorn-img-setting').value = "https://i.imgur.com/XeEii4X.png";
-		document.getElementById('unicorn-add-setting').value = 'u';
-		document.getElementById('unicorn-clear-setting').value = 'c';
-	});
-	event.preventDefault();
+    async init() {
+        await this.loadSettings();
+        this.createContainer();
+		this.reinitializeListener();
+    }
 
-}
-
-/**
- * Syncs setting parameters into chrome storage and executes callback function
- * 
- * @param  {String} unicornImg  url to the unicorn image
- * @param  {String} addAction   keys pressed for add action
- * @param  {String} clearAction keys pressed for clear action
- * @param  {Function} callback function used after storing previous parameters in chrome storage
- */
-function save_options(unicornImg, addAction, clearAction, callback) {
-	chrome.storage.sync.set({
-		unicornImage: unicornImg,
-		unicornAdd: addAction,
-		unicornClear: clearAction
-	}, callback());
-
-}
-
-/**
- * Update status to let user know options were saved.
- */
-function displaySave() {
-	var status = document.getElementById('status');
-	status.textContent = 'Options saved.';
-	setTimeout(function() {
-		status.textContent = '';
-	}, 750);
-
-}
-
-/**
- * Restores settings using the preferences stored in chrome storage
- */
-function restore_options() {
-	chrome.storage.sync.get({
-		unicornImage: 'https://i.imgur.com/XeEii4X.png',
-		unicornAdd: 'u',
-		unicornClear: 'c'
-	}, function(settings) {
-		document.getElementById('unicorn-img-setting').value = settings.unicornImage;
-		document.getElementById('unicorn-add-setting').value = settings.unicornAdd;
-		document.getElementById('unicorn-clear-setting').value = settings.unicornClear;
-	});
-}
-
-/**
- * Populates an input field based on the current event and element id
- * 
- * @param  {Object} event       used to see which keys are pressed and to prevent default action for key
- * @param  {String} elementId   id of input element which will display to the user which keys have been pressed
- */
-function populateKeysPressed(event, elementId) {
-	var keysPressed = [];
-
-	if (event.altKey) {
-		keysPressed.push('alt');
+	addEventListener() {
+		document.body.addEventListener("keydown", this.handleKeyPress);
 	}
 
-	if (event.ctrlKey) {
-		keysPressed.push('ctrl');
+	removeEventListener() {
+		document.body.removeEventListener("keydown", this.handleKeyPress);
 	}
 
-	if (event.metaKey) {
-		keysPressed.push('meta');
+	reinitializeListener() {
+		this.removeEventListener();
+		this.addEventListener();
 	}
 
-	if (event.shiftKey) {
-		keysPressed.push('shift');
-	}
+    async loadSettings() {
+        return new Promise((resolve) => {
+            chrome.storage.sync.get(this.settings, (storedSettings) => {
+                this.settings = storedSettings;
+                resolve();
+            });
+        });
+    }
 
-	if (keysPressed.indexOf(event.key.toLowerCase()) === -1 && event.key.toLowerCase() !== 'control') {
-		keysPressed.push(event.key.toLowerCase());
-	}
+    createContainer() {
+        this.container = document.getElementById("unicorn-container");
+        if (!this.container) {
+            this.container = document.createElement("div");
+            this.container.id = "unicorn-container";
+            document.body.appendChild(this.container);
+        }
+    }
 
-	document.getElementById(elementId).value = keysPressed.join('+');
-	event.preventDefault();
+    handleKeyPress(event) {
+        if (!this.settings.enableUnicorn) {
+            return;
+        }
 
+        if (this.matchKeys(this.settings.unicornClear, event)) {
+            this.clearUnicorns();
+        } else if (this.matchKeys(this.settings.unicornAdd, event)) {
+            this.addUnicorn();
+        }
+    }
+
+    matchKeys(expected, event) {
+        const keysPressed = [];
+
+        if (event.altKey) keysPressed.push("alt");
+        if (event.ctrlKey) keysPressed.push("ctrl");
+        if (event.metaKey) keysPressed.push("meta");
+        if (event.shiftKey) keysPressed.push("shift");
+
+        if (!keysPressed.includes(event.key.toLowerCase()) && event.key.toLowerCase() !== "control") {
+            keysPressed.push(event.key.toLowerCase());
+        }
+
+        return expected === keysPressed.join("+");
+    }
+
+    addUnicorn() {
+        const unicorn = document.createElement("img");
+        unicorn.classList.add("unicorn-img");
+        unicorn.src = this.settings.unicornImage;
+        unicorn.alt = "unicorn";
+        unicorn.style.position = "absolute";
+        unicorn.style.top = `${Math.random() * (window.innerHeight - 100)}px`;
+        unicorn.style.left = "-150px";
+        unicorn.style.width = "100px";
+        unicorn.style.height = "auto";
+
+        this.container.appendChild(unicorn);
+        this.animateUnicorn(unicorn);
+    }
+
+    animateUnicorn(unicorn) {
+        let pos = -150;
+        const move = () => {
+            if (pos >= window.innerWidth + 150) {
+                unicorn.remove();
+            } else {
+                pos += (+this.settings.unicornSpeed);
+                unicorn.style.left = `${pos}px`;
+                requestAnimationFrame(move);
+            }
+        };
+        move();
+    }
+
+    clearUnicorns() {
+        this.container.innerHTML = "";
+    }
 }
 
-document.addEventListener('DOMContentLoaded', restore_options);
+class UnicornSettings {
+    constructor() {
+        this.defaultSettings = {
+            unicornImage: "https://i.imgur.com/XeEii4X.png",
+            unicornAdd: "u",
+            unicornClear: "c",
+            unicornSpeed: 5,
+            enableUnicorn: true,
+        };
 
-document.getElementById('save').addEventListener('click', perform_save);
+        this.handleSave = this.handleSave.bind(this);
+        this.handleReset = this.handleReset.bind(this);
+        this.syncToChromeStorage = this.syncToChromeStorage.bind(this);
+        this.afterSaveHandler = this.afterSaveHandler.bind(this);
+        this.displaySave = this.displaySave.bind(this);
+        this.restoreOptions = this.restoreOptions.bind(this);
+        this.populateKeysPressed = this.populateKeysPressed.bind(this);
 
-document.getElementById('reset').addEventListener('click', perform_reset);
+        document.addEventListener("DOMContentLoaded", this.restoreOptions);
+        document.getElementById("save").addEventListener("click", this.handleSave);
+        document.getElementById("reset").addEventListener("click", this.handleReset);
+        document.getElementById("unicorn-add-setting").addEventListener("keydown", (event) => this.populateKeysPressed(event, "unicorn-add-setting"));
+        document.getElementById("unicorn-clear-setting").addEventListener("keydown", (event) => this.populateKeysPressed(event, "unicorn-clear-setting"));
 
-document.getElementById('unicorn-add-setting').addEventListener('keydown', function(event) {
-	populateKeysPressed(event, 'unicorn-add-setting');
+        this.unicornAnimator = new UnicornAnimator();
+    }
 
-});
+    handleSave(event) {
+        event.preventDefault();
+        const unicornImage = document.getElementById("unicorn-img-setting").value.trim();
+        const unicornAdd = document.getElementById("unicorn-add-setting").value.trim();
+        const unicornClear = document.getElementById("unicorn-clear-setting").value.trim();
+        let unicornSpeed = +document.getElementById("unicorn-speed-setting").value;
+        const enableUnicorn = document.getElementById("enable-unicorn-setting").checked;
 
-document.getElementById('unicorn-clear-setting').addEventListener('keydown', function(event) {
-	populateKeysPressed(event, 'unicorn-clear-setting');
+        if (!unicornImage || !unicornAdd || !unicornClear || isNaN(unicornSpeed)) {
+            alert("All fields must be filled out.");
+            return;
+        }
 
-});
+        if (unicornSpeed <= 0 || unicornSpeed > 20) {
+            alert("Unicorn speed must be between 1 and 20.");
+            return;
+        }
+
+        this.syncToChromeStorage(
+            {
+                unicornImage,
+                unicornAdd,
+                unicornClear,
+                unicornSpeed,
+                enableUnicorn,
+            },
+            this.afterSaveHandler
+        );
+    }
+
+    handleReset(event) {
+        this.syncToChromeStorage(this.defaultSettings, () => {
+            this.afterSaveHandler();
+            this.restoreOptions();
+        });
+        event.preventDefault();
+    }
+
+    syncToChromeStorage(settings, callback) {
+        chrome.storage.sync.set(settings, callback);
+    }
+
+    afterSaveHandler() {
+        this.displaySave();
+        this.unicornAnimator.init();
+    }
+
+    displaySave() {
+        const status = document.getElementById("status");
+        status.textContent = "Options saved.";
+        setTimeout(() => {
+            status.textContent = "";
+        }, 750);
+    }
+
+    restoreOptions() {
+        chrome.storage.sync.get(this.defaultSettings, (settings) => {
+            document.getElementById("unicorn-img-setting").value = settings.unicornImage;
+            document.getElementById("unicorn-add-setting").value = settings.unicornAdd;
+            document.getElementById("unicorn-clear-setting").value = settings.unicornClear;
+            document.getElementById("unicorn-speed-setting").value = settings.unicornSpeed || 5;
+            document.getElementById("enable-unicorn-setting").checked = settings.enableUnicorn;
+        });
+    }
+
+    populateKeysPressed(event, elementId) {
+        event.preventDefault();
+        const keysPressed = [];
+        if (event.altKey) keysPressed.push("alt");
+        if (event.ctrlKey) keysPressed.push("ctrl");
+        if (event.metaKey) keysPressed.push("meta");
+        if (event.shiftKey) keysPressed.push("shift");
+        if (!keysPressed.includes(event.key.toLowerCase()) && event.key.toLowerCase() !== "control") {
+            keysPressed.push(event.key.toLowerCase());
+        }
+        document.getElementById(elementId).value = keysPressed.join("+");
+    }
+}
+
+new UnicornSettings();
