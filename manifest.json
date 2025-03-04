@@ -1,7 +1,7 @@
 {
   "name": "Flying Unicorn",
-  "version": "0.0.3",
-  "manifest_version": 2,
+  "version": "0.1.0",
+  "manifest_version": 3,
   "description": "Inserts a unicorn into your page!",
   "homepage_url": "https://github.com/justintieu/flying-unicorn",
   "icons": {
@@ -11,9 +11,11 @@
   },
   "default_locale": "en",
   "permissions": [
-    "https://*/*",
-    "http://*/* ",
     "storage"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
   ],
   "content_scripts": [
     {
@@ -26,7 +28,8 @@
       ],
       "js": [
         "src/inject/inject.js"
-      ]
+      ],
+      "type": "module"
     }
   ],
   "options_page": "src/options/index.html"
