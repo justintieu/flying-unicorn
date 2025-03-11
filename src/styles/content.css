@@ -1,0 +1,7 @@
+.unicorn-img {
+    position: fixed;
+    top: 50%;
+    width: 150px;
+    left: -150px;
+    z-index: 2147483647;
+}

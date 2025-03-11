@@ -1,29 +1,27 @@
 class UnicornAnimator {
-    _container;
-    settings = {};
-    keyPressEventReference;
-
     constructor() {
         this.container = null;
-        this.settings = this.getDefaultSettings();
-        this.initializeAnimator();
-    }
-
-    getDefaultSettings() {
-        return {
+        this.settings = {
             unicornImage: "https://i.imgur.com/XeEii4X.png",
             unicornAdd: "u",
             unicornClear: "c",
             unicornSpeed: 5,
+            enableUnicorn: true,
         };
+
+        this.init();
     }
 
-    async initializeAnimator() {
+    // Initialize the script: load settings and set up event listeners
+    async init() {
         await this.loadSettings();
         this.createContainer();
-        this.reinitializeListener();
+        document.body.addEventListener("keydown", (event) =>
+            this.handleKeyPress(event),
+        );
     }
 
+    // Retrieve settings from Chrome storage
     async loadSettings() {
         return new Promise((resolve) => {
             chrome.storage.sync.get(this.settings, (storedSettings) => {
@@ -33,6 +31,7 @@ class UnicornAnimator {
         });
     }
 
+    // Creates a container for unicorns if it doesn't exist
     createContainer() {
         this.container = document.getElementById("unicorn-container");
         if (!this.container) {
@@ -42,7 +41,12 @@ class UnicornAnimator {
         }
     }
 
+    // Handles keypress events for adding/removing unicorns
     handleKeyPress(event) {
+        if (!this.settings.enableUnicorn) {
+            return;
+        }
+
         if (this.matchKeys(this.settings.unicornClear, event)) {
             this.clearUnicorns();
         } else if (this.matchKeys(this.settings.unicornAdd, event)) {
@@ -50,6 +54,7 @@ class UnicornAnimator {
         }
     }
 
+    // Compares expected key combination with the actual event keys
     matchKeys(expected, event) {
         const keysPressed = [];
 
@@ -68,11 +73,12 @@ class UnicornAnimator {
         return expected === keysPressed.join("+");
     }
 
+    // Adds a unicorn to the page and starts animation
     addUnicorn() {
         const unicorn = document.createElement("img");
         unicorn.classList.add("unicorn-img");
         unicorn.src = this.settings.unicornImage;
-        unicorn.alt = "unicorn"; // Alt text
+        unicorn.alt = "unicorn";
         unicorn.style.position = "absolute";
         unicorn.style.top = `${Math.random() * (window.innerHeight - 100)}px`; // Random vertical position
         unicorn.style.left = "-150px"; // Start off-screen
@@ -83,13 +89,14 @@ class UnicornAnimator {
         this.animateUnicorn(unicorn);
     }
 
+    // Animates the unicorn across the screen
     animateUnicorn(unicorn) {
         let pos = -150;
         const move = () => {
             if (pos >= window.innerWidth + 150) {
                 unicorn.remove();
             } else {
-                pos += 5; // Move speed
+                pos += +this.settings.unicornSpeed; // Move speed
                 unicorn.style.left = `${pos}px`;
                 requestAnimationFrame(move);
             }
@@ -97,28 +104,10 @@ class UnicornAnimator {
         move();
     }
 
+    // Clears all unicorns from the screen
     clearUnicorns() {
         this.container.innerHTML = "";
     }
-
-    addEventListener() {
-        this.keyPressEventReference = this.handleKeyPress.bind(this);
-        document.body.addEventListener("keydown", this.keyPressEventReference);
-    }
-
-    removeEventListener() {
-        if (this.keyPressEventReference) {
-            document.body.removeEventListener(
-                "keydown",
-                this.keyPressEventReference,
-            );
-        }
-    }
-
-    reinitializeListener() {
-        this.removeEventListener();
-        this.addEventListener();
-    }
 }
 
-export default UnicornAnimator;
+new UnicornAnimator();
