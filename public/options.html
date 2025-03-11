@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flying Unicorn - Options</title>
+        <link rel="stylesheet" href="styles/options.css" />
+        <meta charset="UTF-8" />
+    </head>
+    <body class="p-4 bg-gray-50 min-w-[400px]">
+        <div class="space-y-4">
+            <h1 class="text-2xl font-bold">Extension Settings</h1>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <label
+                    for="unicorn-img-setting"
+                    class="block text-sm font-medium mb-2"
+                    >Unicorn</label
+                >
+                <input
+                    type="text"
+                    id="unicorn-img-setting"
+                    class="w-full px-3 py-2 border rounded-md"
+                    placeholder="Insert URL to an image (e.g. https://i.imgur.com/XeEii4X.png)"
+                />
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <label
+                    for="unicorn-add-setting"
+                    class="block text-sm font-medium mb-2"
+                    >Set Key to Add Unicorn to Page</label
+                >
+                <input
+                    type="text"
+                    id="unicorn-add-setting"
+                    class="w-full px-3 py-2 border rounded-md"
+                    placeholder="U"
+                />
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <label
+                    for="unicorn-clear-setting"
+                    class="block text-sm font-medium mb-2"
+                    >Set Key to Clear All Unicorns from Page</label
+                >
+                <input
+                    type="text"
+                    id="unicorn-clear-setting"
+                    class="w-full px-3 py-2 border rounded-md"
+                    placeholder="C"
+                />
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <label
+                    for="unicorn-speed-setting"
+                    class="block text-sm font-medium mb-2"
+                    >Set Speed of Unicorns Flying Across Page (between 1 and
+                    20)</label
+                >
+                <input
+                    type="number"
+                    id="unicorn-speed-setting"
+                    class="w-full px-3 py-2 border rounded-md"
+                    placeholder="5"
+                    min="1"
+                    max="20"
+                />
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <label
+                    for="enable-unicorn-setting"
+                    class="block text-sm font-medium mb-2"
+                    >Enable Flying Unicorn (requires page reload for changes to
+                    take effect)</label
+                >
+                <input
+                    type="checkbox"
+                    id="enable-unicorn-setting"
+                    class="px-3 py-2 border rounded-md"
+                />
+            </div>
+            <div class="flex space-between">
+                <button
+                    id="resetSettings"
+                    class="w-1/2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 mr-1"
+                >
+                    Restore Defaults Settings
+                </button>
+                <button
+                    id="saveSettings"
+                    class="w-1/2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 ml-1"
+                >
+                    Save Settings
+                </button>
+            </div>
+            <footer>
+                Built with ❤️ using
+                <a
+                    href="https://github.com/justintieu/chrome-extension-boilerplate"
+                    target="_blank"
+                    ><span class="font-bold"
+                        >Chrome Extension Boilerplate</span
+                    ></a
+                >
+            </footer>
+        </div>
+        <script src="options.js"></script>
+    </body>
+</html>
