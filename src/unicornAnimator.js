@@ -20,7 +20,6 @@ class UnicornAnimator {
 
     async initializeAnimator() {
         await this.loadSettings();
-        this.createContainer();
         this.reinitializeListener();
     }
 
@@ -31,15 +30,6 @@ class UnicornAnimator {
                 resolve();
             });
         });
-    }
-
-    createContainer() {
-        this.container = document.getElementById("unicorn-container");
-        if (!this.container) {
-            this.container = document.createElement("div");
-            this.container.id = "unicorn-container";
-            document.body.appendChild(this.container);
-        }
     }
 
     handleKeyPress(event) {
@@ -79,7 +69,7 @@ class UnicornAnimator {
         unicorn.style.width = "100px";
         unicorn.style.height = "auto";
 
-        this.container.appendChild(unicorn);
+        document.body.appendChild(unicorn);
         this.animateUnicorn(unicorn);
     }
 
