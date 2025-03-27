@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Flying Unicorn",
   "description": "Inserts a unicorn into your page!",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "homepage_url": "https://github.com/justintieu/flying-unicorn",
   "permissions": [
     "storage"
