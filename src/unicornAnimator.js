@@ -15,6 +15,7 @@ class UnicornAnimator {
             unicornAdd: "u",
             unicornClear: "c",
             unicornSpeed: 5,
+            enableUnicorn: true,
         };
     }
 
@@ -33,7 +34,9 @@ class UnicornAnimator {
     }
 
     handleKeyPress(event) {
-        if (this.matchKeys(this.settings.unicornClear, event)) {
+        if (!this.settings.enableUnicorn) {
+            return;
+        } else if (this.matchKeys(this.settings.unicornClear, event)) {
             this.clearUnicorns();
         } else if (this.matchKeys(this.settings.unicornAdd, event)) {
             this.addUnicorn();
