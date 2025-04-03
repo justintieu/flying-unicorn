@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/justintieu/flying-unicorn/compare/v1.0.3...v1.0.4) (2025-04-03)
+
+### Bug Fixes
+
+- removing unicorns from webpage ([aae14ab](https://github.com/justintieu/flying-unicorn/commit/aae14ab6a6def05558c6176aef6100048fbc4b38))
+
 # 1.0.0 (2025-03-27)
 
 ### Bug Fixes

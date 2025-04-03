@@ -1,6 +1,6 @@
 {
     "name": "flying-unicorn",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Inserts a unicorn into your page!",
     "scripts": {
         "build": "npm run lint && webpack --mode production",
