@@ -80,7 +80,7 @@ class UnicornAnimator {
             if (pos >= window.innerWidth + 150) {
                 unicorn.remove();
             } else {
-                pos += this.settings.unicornSpeed; // Use the configured speed
+                pos += parseInt(this.settings.unicornSpeed, 10); // Use the configured speed
                 unicorn.style.left = `${pos}px`;
                 requestAnimationFrame(move);
             }
