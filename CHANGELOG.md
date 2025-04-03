@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/justintieu/flying-unicorn/compare/v1.0.4...v1.0.5) (2025-04-03)
+
+### Bug Fixes
+
+- using speed from settings ([25e248f](https://github.com/justintieu/flying-unicorn/commit/25e248fa890e001123d68b6de7d6d9bdf369f141))
+
 ## [1.0.4](https://github.com/justintieu/flying-unicorn/compare/v1.0.3...v1.0.4) (2025-04-03)
 
 ### Bug Fixes
