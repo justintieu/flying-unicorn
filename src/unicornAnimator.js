@@ -1,10 +1,8 @@
 class UnicornAnimator {
-    _container;
     settings = {};
     keyPressEventReference;
 
     constructor() {
-        this.container = null;
         this.settings = this.getDefaultSettings();
         this.initializeAnimator();
     }
@@ -27,7 +25,7 @@ class UnicornAnimator {
     async loadSettings() {
         return new Promise((resolve) => {
             chrome.storage.sync.get(this.settings, (storedSettings) => {
-                this.settings = storedSettings;
+                this.settings = { ...this.settings, ...storedSettings }; // Merge defaults with stored settings
                 resolve();
             });
         });
@@ -65,10 +63,10 @@ class UnicornAnimator {
         const unicorn = document.createElement("img");
         unicorn.classList.add("unicorn-img");
         unicorn.src = this.settings.unicornImage;
-        unicorn.alt = "unicorn"; // Alt text
+        unicorn.alt = "unicorn";
         unicorn.style.position = "absolute";
-        unicorn.style.top = `${Math.random() * (window.innerHeight - 100)}px`; // Random vertical position
-        unicorn.style.left = "-150px"; // Start off-screen
+        unicorn.style.top = `${Math.random() * (window.innerHeight - 100)}px`;
+        unicorn.style.left = "-150px";
         unicorn.style.width = "100px";
         unicorn.style.height = "auto";
 
@@ -82,7 +80,7 @@ class UnicornAnimator {
             if (pos >= window.innerWidth + 150) {
                 unicorn.remove();
             } else {
-                pos += 5; // Move speed
+                pos += this.settings.unicornSpeed; // Use the configured speed
                 unicorn.style.left = `${pos}px`;
                 requestAnimationFrame(move);
             }
@@ -91,7 +89,7 @@ class UnicornAnimator {
     }
 
     clearUnicorns() {
-        this.container.innerHTML = "";
+        document.querySelectorAll(".unicorn-img").forEach((el) => el.remove());
     }
 
     addEventListener() {
